@@ -159,7 +159,8 @@ public sealed class PemdasSolver
 
     private static string BuildExplanation(BinaryNode node)
     {
-        var groupingPrefix = HasGroupingAncestor(node)
+        var insideGrouping = HasGroupingAncestor(node);
+        var groupingPrefix = insideGrouping
             ? "Solve the innermost grouping first. "
             : string.Empty;
 
@@ -167,7 +168,8 @@ public sealed class PemdasSolver
         {
             '^' => $"{groupingPrefix}Evaluate exponents before multiplication, division, addition, or subtraction.",
             '*' or '/' => $"{groupingPrefix}After grouping symbols and exponents, solve multiplication and division from left to right.",
-            '+' or '-' => $"{groupingPrefix}Addition and subtraction come after grouping symbols, exponents, multiplication, and division.",
+            '+' or '-' when insideGrouping => "Solve the innermost grouping first. This addition or subtraction happens now because it is inside grouping symbols.",
+            '+' or '-' => "Addition and subtraction come after grouping symbols, exponents, multiplication, and division.",
             _ => "Follow PEMDAS to solve the next operation.",
         };
     }
