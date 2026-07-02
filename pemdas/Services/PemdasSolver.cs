@@ -1,10 +1,17 @@
 using System.Globalization;
+using System.Text.RegularExpressions;
 using pemdas.Models;
 
 namespace pemdas.Services;
 
 public sealed class PemdasSolver
 {
+    private static readonly Regex AllowedInputPattern =
+        new(@"^[\d\s.+\-*/^()\[\]{}]+$", RegexOptions.Compiled);
+
+    public static bool IsValidInput(string expression) =>
+        AllowedInputPattern.IsMatch(expression);
+
     public PemdasPageViewModel Solve(string? expression)
     {
         var trimmedExpression = expression?.Trim() ?? string.Empty;
@@ -14,6 +21,15 @@ public sealed class PemdasSolver
             {
                 Expression = string.Empty,
                 ErrorMessage = "Enter an expression with up to six numbers.",
+            };
+        }
+
+        if (!IsValidInput(trimmedExpression))
+        {
+            return new PemdasPageViewModel
+            {
+                Expression = trimmedExpression,
+                ErrorMessage = "Only numbers, arithmetic operators (+, -, *, /, ^), and grouping symbols ( ) [ ] { } are allowed.",
             };
         }
 
