@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="pemdas.Tests/pemdas.Tests.csproj" />
+  <Project Path="pemdas/pemdas.csproj" />
+</Solution>
