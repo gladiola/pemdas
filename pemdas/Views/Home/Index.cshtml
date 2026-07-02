@@ -1,8 +1,57 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model pemdas.Models.PemdasPageViewModel
+@{
+    ViewData["Title"] = "PEMDAS Solver";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<section class="hero">
+    <div class="hero-copy">
+        <p class="eyebrow">PEMDAS practice</p>
+        <h1>Solve arithmetic step by step.</h1>
+        <p class="lead">
+            Enter an expression with up to six floating point numbers, grouping symbols, and arithmetic operators.
+            The solver explains each step using the order of operations.
+        </p>
+        <ul class="helper-list">
+            <li>Supported operators: <code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>, <code>^</code></li>
+            <li>Supported grouping symbols: <code>()</code>, <code>[]</code>, <code>{}</code></li>
+            <li>Example: <code>(3.5 + 2.5) * 4 - 6 / 3</code></li>
+        </ul>
+    </div>
+</section>
+
+<section class="solver-card">
+    <form asp-action="Index" method="post" class="solver-form" novalidate>
+        <div class="mb-3">
+            <label asp-for="Expression" class="form-label"></label>
+            <input asp-for="Expression" class="form-control form-control-lg" placeholder="Enter an expression such as (3 + 5) * 2" autocomplete="off" />
+        </div>
+        <button type="submit" class="btn btn-primary btn-lg">Show PEMDAS steps</button>
+    </form>
+
+    @if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
+    {
+        <div class="alert alert-danger mt-4" role="alert">
+            @Model.ErrorMessage
+        </div>
+    }
+
+    @if (!string.IsNullOrWhiteSpace(Model.FinalAnswer))
+    {
+        <div class="results mt-4">
+            <div class="result-banner">
+                <span class="result-label">Final answer</span>
+                <strong>@Model.FinalAnswer</strong>
+            </div>
+
+            <ol class="step-list">
+                @foreach (var step in Model.Steps)
+                {
+                    <li class="step-card">
+                        <p class="step-expression"><span>@step.Before</span> → <span>@step.After</span></p>
+                        <p class="step-explanation">@step.Explanation</p>
+                    </li>
+                }
+            </ol>
+        </div>
+    }
+</section>

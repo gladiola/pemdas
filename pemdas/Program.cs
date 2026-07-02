@@ -1,7 +1,10 @@
+using pemdas.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddSingleton<PemdasSolver>();
 
 var app = builder.Build();
 
