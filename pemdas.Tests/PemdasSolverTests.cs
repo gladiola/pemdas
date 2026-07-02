@@ -58,4 +58,35 @@ public sealed class PemdasSolverTests
         Assert.Equal("Division by zero is undefined.", result.ErrorMessage);
         Assert.Null(result.FinalAnswer);
     }
+
+    [Theory]
+    [InlineData("abc")]
+    [InlineData("1 + abc")]
+    [InlineData("SELECT * FROM users")]
+    [InlineData("1; DROP TABLE numbers")]
+    [InlineData("cat /etc/passwd")]
+    [InlineData("!@#$%")]
+    [InlineData("1 + 2 & 3")]
+    public void Solve_RejectsDisallowedCharacters(string expression)
+    {
+        var result = _solver.Solve(expression);
+
+        Assert.NotNull(result.ErrorMessage);
+        Assert.Contains("Only numbers", result.ErrorMessage);
+        Assert.Null(result.FinalAnswer);
+        Assert.Empty(result.Steps);
+    }
+
+    [Theory]
+    [InlineData("1 + 2")]
+    [InlineData("(3.5 + 2.5) * 4 - 6 / 3")]
+    [InlineData("{[1 + 2] * 3}")]
+    [InlineData("2 ^ 10")]
+    public void Solve_AcceptsValidAllowlistedInput(string expression)
+    {
+        var result = _solver.Solve(expression);
+
+        Assert.Null(result.ErrorMessage);
+        Assert.NotNull(result.FinalAnswer);
+    }
 }

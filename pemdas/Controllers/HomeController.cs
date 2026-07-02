@@ -23,6 +23,16 @@ public class HomeController : Controller
     [ValidateAntiForgeryToken]
     public IActionResult Index(PemdasPageViewModel model)
     {
+        if (!ModelState.IsValid)
+        {
+            var errorMessage = ModelState.Values
+                .SelectMany(v => v.Errors)
+                .Select(e => e.ErrorMessage)
+                .FirstOrDefault() ?? "Invalid input.";
+            model.ErrorMessage = errorMessage;
+            return View(model);
+        }
+
         var result = _solver.Solve(model.Expression);
         return View(result);
     }
